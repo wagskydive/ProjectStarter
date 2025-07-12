@@ -17,7 +17,7 @@ def create_file(path: Path, content: str = ""):
     """Write ``content`` to ``path`` without creating new directories."""
     if not path.parent.exists():
         raise FileNotFoundError(f"Directory {path.parent} does not exist.")
-    path.write_text(content)
+    path.write_text(content, encoding="utf-8")
 
 
 def _empty_design(name: str) -> str:
@@ -27,17 +27,17 @@ def _empty_design(name: str) -> str:
 def _default_agents() -> str:
     """Return the default agent instructions from the template file."""
     template_path = Path(__file__).with_name("default_agent_text.md")
-    return template_path.read_text()
+    return template_path.read_text(encoding="utf-8")
 
 
 def _default_tickets(design_provided: bool, name: str = "", description: str = "") -> str:
     """Return the default tickets text from the appropriate template."""
     if design_provided:
         path = Path(__file__).with_name("default_tickets_with_design.md")
-        return path.read_text()
+        return path.read_text(encoding="utf-8")
 
     path = Path(__file__).with_name("default_tickets_no_design.md")
-    template = path.read_text()
+    template = path.read_text(encoding="utf-8")
     return template.format(name=name, description=description)
 
 
@@ -111,8 +111,16 @@ class SetupWizardGUI:
         messagebox.showinfo("Success", f"Project initialized at {project_dir.resolve()}")
         self.root.quit()
 
-    def _create(self, project_dir: Path, design_path: Path = None, name: str = "", description: str = "", design_provided: bool = True):
-        project_dir.mkdir(parents=True, exist_ok=True)
+    def _create(
+        self,
+        project_dir: Path,
+        design_path: Path = None,
+        name: str = "",
+        description: str = "",
+        design_provided: bool = True,
+    ):
+        if not project_dir.exists():
+            raise FileNotFoundError(f"Directory {project_dir} does not exist.")
 
         if design_provided:
             if design_path is None:
@@ -121,7 +129,9 @@ class SetupWizardGUI:
             # new project regardless of the original file name.
             create_file(
                 project_dir / "design.md",
-                Path(design_path).read_text() if design_path.exists() else "",
+                Path(design_path).read_text(encoding="utf-8")
+                if design_path.exists()
+                else "",
             )
         else:
             create_file(project_dir / "design.md", _empty_design(name))
