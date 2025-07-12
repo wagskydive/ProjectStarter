@@ -17,28 +17,66 @@ def create_file(path: Path, content: str = ""):
     path.write_text(content)
 
 
-def main():
-    project_dir = Path(prompt("Project directory", "new_project"))
-    design_path = Path(prompt("Path to design document", "design.md"))
-    project_dir.mkdir(parents=True, exist_ok=True)
-
-    # folder structure
+def _create_structure(project_dir: Path):
     for sub in ["src", "scripts", "docs", "config", ".github/workflows"]:
         (project_dir / sub).mkdir(parents=True, exist_ok=True)
 
-    # basic files
+
+def _package_json(name: str) -> str:
+    return (
+        '{\n'
+        f'  "name": "{name}",\n'
+        '  "version": "1.0.0"\n'
+        '}\n'
+    )
+
+
+def main():
+    project_dir = Path(prompt("Project directory", "new_project"))
+    design_path = Path(prompt("Path to design document", "design.md"))
+    template = prompt(
+        "Project template (python/node/godot/arduino)", "python"
+    ).lower()
+    project_dir.mkdir(parents=True, exist_ok=True)
+
+    _create_structure(project_dir)
+
     create_file(project_dir / "README.md", f"# {project_dir.name}\n")
-    create_file(project_dir / "requirements.txt")
     create_file(project_dir / "agents.md", _default_agents())
     create_file(project_dir / "tickets.md", _default_tickets(design_path))
 
-    # batch setup script placeholder
-    create_file(project_dir / "scripts" / "setup.bat", _setup_bat())
+    if template == "python":
+        create_file(project_dir / "requirements.txt")
+        create_file(project_dir / "scripts" / "setup.bat", _setup_bat())
+        create_file(
+            project_dir / ".github" / "workflows" / "python.yml",
+            _workflow_yaml("python"),
+        )
+    elif template == "node":
+        create_file(project_dir / "package.json", _package_json(project_dir.name))
+        create_file(project_dir / "src" / "index.js", "// entry point\n")
+        create_file(
+            project_dir / ".github" / "workflows" / "node.yml",
+            _workflow_yaml("node"),
+        )
+    elif template == "godot":
+        create_file(project_dir / "project.godot")
+        create_file(
+            project_dir / ".github" / "workflows" / "godot.yml",
+            _workflow_yaml("godot"),
+        )
+    elif template == "arduino":
+        create_file(project_dir / "src" / "sketch.ino", "// Arduino sketch\n")
+        create_file(
+            project_dir / ".github" / "workflows" / "arduino.yml",
+            _workflow_yaml("arduino"),
+        )
+    else:
+        print(f"Unknown template '{template}', using generic setup.")
 
-    # github workflow placeholder
-    create_file(project_dir / ".github" / "workflows" / "python-app.yml", _workflow_yaml())
-
-    print(f"Project initialized at {project_dir.resolve()}")
+    print(
+        f"Project initialized at {project_dir.resolve()} using {template} template"
+    )
 
 
 def _default_agents() -> str:
@@ -73,20 +111,46 @@ def _setup_bat() -> str:
     )
 
 
-def _workflow_yaml() -> str:
+def _workflow_yaml(template: str) -> str:
+    if template == "python":
+        return (
+            "name: Python package\n\n"
+            "on: [push]\n\n"
+            "jobs:\n"
+            "  build:\n"
+            "    runs-on: ubuntu-latest\n"
+            "    steps:\n"
+            "      - uses: actions/checkout@v3\n"
+            "      - uses: actions/setup-python@v4\n"
+            "        with:\n"
+            "          python-version: '3.x'\n"
+            "      - run: pip install -r requirements.txt\n"
+            "      - run: echo Build completed\n"
+        )
+    if template == "node":
+        return (
+            "name: Node.js CI\n\n"
+            "on: [push]\n\n"
+            "jobs:\n"
+            "  build:\n"
+            "    runs-on: ubuntu-latest\n"
+            "    steps:\n"
+            "      - uses: actions/checkout@v3\n"
+            "      - uses: actions/setup-node@v3\n"
+            "        with:\n"
+            "          node-version: '16'\n"
+            "      - run: npm install\n"
+            "      - run: npm test --if-present\n"
+        )
     return (
-        "name: Python package\n\n"
+        "name: CI\n\n"
         "on: [push]\n\n"
         "jobs:\n"
         "  build:\n"
         "    runs-on: ubuntu-latest\n"
         "    steps:\n"
         "      - uses: actions/checkout@v3\n"
-        "      - uses: actions/setup-python@v4\n"
-        "        with:\n"
-        "          python-version: '3.x'\n"
-        "      - run: pip install -r requirements.txt\n"
-        "      - run: echo Build completed\n"
+        "      - run: echo Build placeholder\n"
     )
 
 
