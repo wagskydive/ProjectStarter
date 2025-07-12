@@ -246,7 +246,12 @@ class SetupWizardGUI:
         if design_provided:
             if design_path is None:
                 design_path = project_dir / "design.md"
-            create_file(project_dir / design_path.name, Path(design_path).read_text() if design_path.exists() else "")
+            # Always rename the copied design document to "design.md" inside the
+            # new project regardless of the original file name.
+            create_file(
+                project_dir / "design.md",
+                Path(design_path).read_text() if design_path.exists() else "",
+            )
         else:
             create_file(project_dir / "design.md", _empty_design(name))
 
