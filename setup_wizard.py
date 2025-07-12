@@ -256,7 +256,7 @@ class SetupWizardGUI:
             create_file(project_dir / "design.md", _empty_design(name))
 
         create_file(project_dir / "README.md", f"# {project_dir.name}\n")
-        create_file(project_dir / "agents.md", _default_agents())
+        create_file(project_dir / "AGENTS.md", _default_agents())
         create_file(project_dir / "tickets.md", _default_tickets(design_provided, name, description))
 
         if template == "python":
