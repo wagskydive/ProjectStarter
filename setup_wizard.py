@@ -39,11 +39,19 @@ def _empty_design(name: str) -> str:
 def _default_agents() -> str:
     return (
         "# Agent Instructions\n\n"
-        "1. Review `PROJECT_SETUP_DESIGN_DOCUMENT.md` to understand the project goals.\n"
+        "Your role is determined by your task"
+        
+        "1. Review `design.md` to understand the project goals.\n"
         "2. Use `tickets.md` for task tracking. Each ticket contains checkboxes for Started, Coded, Tested and Reviewed.\n"
-        "3. Work on tickets sequentially. When a ticket is complete, open a pull request referencing it.\n"
-        "4. A reviewer will create a review ticket and may reopen the original if changes are required.\n"
-        "5. Continue iterating through the tickets until the project is finished."
+        "3. If tickets.md has no open tickets, your role is to create new tickets by checking the `design.md` file and the current project state
+        "4. Work on tickets sequentially.\n" 
+        "5. Determine if the ticket has a small enough scope and if not you split the ticket op in smaller chucks and start only the first one.\n"
+        "6. Write Tests first. Use Test Driven Approach\n"
+        "7. Use Tests to write documentation\n"
+        "6. When a ticket is complete, open a pull request referencing it.\n"
+        "4. As a reviewer, you may reopen the original if changes are required.\n"
+        "5. A reviewer can also create new tickets\n"
+        "6. Continue iterating through the tickets until the project is finished."
     )
 
 
@@ -56,6 +64,7 @@ def _default_tickets(design_provided: bool, name: str = "", description: str = "
             "- [ ] Coded\n"
             "- [ ] Tested\n"
             "- [ ] Reviewed\n"
+            "- [ ] Documented\n"
             "- Read the design document and create `scripts/setup.bat` that:\n"
             "  - creates a virtual environment\n"
             "  - sets up folders (src, scripts, docs, config)\n"
@@ -66,6 +75,7 @@ def _default_tickets(design_provided: bool, name: str = "", description: str = "
             "- [ ] Coded\n"
             "- [ ] Tested\n"
             "- [ ] Reviewed\n"
+            "- [ ] Documented\n"
             "- Review the design document and expand `agents.md` with detailed project guidelines and iterative workflow instructions."
         )
 
@@ -76,6 +86,7 @@ def _default_tickets(design_provided: bool, name: str = "", description: str = "
         "- [ ] Coded\n"
         "- [ ] Tested\n"
         "- [ ] Reviewed\n"
+        "- [ ] Documented\n"
         "- Use the following information to write `design.md`:\n"
         f"  - Name: {name}\n"
         f"  - Description: {description}\n"
@@ -85,6 +96,7 @@ def _default_tickets(design_provided: bool, name: str = "", description: str = "
         "- [ ] Coded\n"
         "- [ ] Tested\n"
         "- [ ] Reviewed\n"
+        "- [ ] Documented\n"
         "- After the design document is ready, create `scripts/setup.bat` that:\n"
         "  - creates a virtual environment\n"
         "  - sets up folders (src, scripts, docs, config)\n"
@@ -95,6 +107,7 @@ def _default_tickets(design_provided: bool, name: str = "", description: str = "
         "- [ ] Coded\n"
         "- [ ] Tested\n"
         "- [ ] Reviewed\n"
+        "- [ ] Documented\n"
         "- Review the design document and expand `agents.md` with detailed project guidelines and iterative workflow instructions."
     )
 
