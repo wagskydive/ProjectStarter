@@ -2,4 +2,5 @@
 
 check PROJECT_SETUP_DESIGN_DOCUMENT.md for the project design.
 
-Now we will implement a gui and extend the form so the user can either input a design.md or fill in a name and a description and in that case the program creates an empty design.md template and the first ticket will become an instruction to let the agent create a design document from the description
+- We will now expand on the ticket system. It needs to have checkboxes for: Started, Coded, Tested, Reviewed
+- Also we added better instruction to generate a proper agents.md file that has more explicit workflow specifications so that it serves as a good prompt for the agent.
