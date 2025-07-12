@@ -14,7 +14,9 @@ from tkinter import ttk, filedialog, messagebox
 # ---------------------------------------------------------------------------
 
 def create_file(path: Path, content: str = ""):
-    path.parent.mkdir(parents=True, exist_ok=True)
+    """Write ``content`` to ``path`` without creating new directories."""
+    if not path.parent.exists():
+        raise FileNotFoundError(f"Directory {path.parent} does not exist.")
     path.write_text(content)
 
 
@@ -23,85 +25,20 @@ def _empty_design(name: str) -> str:
 
 
 def _default_agents() -> str:
-    return (
-        "# Agent Instructions\n\n"
-        "Your role is determined by your task.\n"
-        "The roles are: \n"
-        " - Software Architect, Test Writer, Code Implementer, Test Runner, Reviewer, Documentation Writer\n"
-        " - You also have another role as creative critical thinker. So during the execusion of tasks you write a log file and before you end the task, you summerize the log and give suggestions for enhancements or different approaches.\n"
-        
-        "1. Review `design.md` to understand the project goals.\n"
-        "2. Use `tickets.md` for task tracking. Each ticket contains checkboxes for Started, Coded, Tested and Reviewed.\n"
-        "3. If tickets.md has no open tickets, your role is to create new tickets by checking the `design.md` file and the current project state"
-        "4. Work on tickets sequentially.\n" 
-        "5. Determine if the ticket has a small enough scope. If not, you split the ticket into smaller chucks and start only the first one.\n"
-        "6. Write Tests first. Use Test Driven Approach\n"
-        "7. Use Tests to write documentation\n"
-        "8. Update the README.md file if required, so it includes a full instruction on how to run the app\n"
-        "9. When a ticket is complete, open a pull request referencing it.\n"
-        "10. As a reviewer, you may reopen the original if changes are required.\n"
-        "11. A reviewer can also create new tickets\n"
-        "12. Continue iterating through the tickets until the project is finished."
-    )
+    """Return the default agent instructions from the template file."""
+    template_path = Path(__file__).with_name("default_agent_text.md")
+    return template_path.read_text()
 
 
 def _default_tickets(design_provided: bool, name: str = "", description: str = "") -> str:
+    """Return the default tickets text from the appropriate template."""
     if design_provided:
-        return (
-            "# Tickets\n\n"
-            "## Ticket 1 - Project Setup\n"
-            "- [ ] Started\n"
-            "- [ ] Coded\n"
-            "- [ ] Tested\n"
-            "- [ ] Reviewed\n"
-            "- [ ] Documented\n"
-            "- Read the design document and create `scripts/project-setup.bat` that:\n"
-            "  - creates a boiler plate project\n"
-            "  - sets up folders (src, scripts, docs, config, tests, logs)\n"
-            "  - installs dependencies and adds them to `requirements.txt`\n"
-            "- Run the project-setup.bat script"
-            "\n"
-            "## Ticket 2 - Update Agents Instructions\n"
-            "- [ ] Started\n"
-            "- [ ] Coded\n"
-            "- [ ] Tested\n"
-            "- [ ] Reviewed\n"
-            "- [ ] Documented\n"
-            "- Review the design document and expand `agents.md` with detailed project guidelines and iterative workflow instructions."
-        )
+        path = Path(__file__).with_name("default_tickets_with_design.md")
+        return path.read_text()
 
-    return (
-        "# Tickets\n\n"
-        "## Ticket 1 - Create Design Document\n"
-        "- [ ] Started\n"
-        "- [ ] Coded\n"
-        "- [ ] Tested\n"
-        "- [ ] Reviewed\n"
-        "- [ ] Documented\n"
-        "- Use the following information to write `design.md`:\n"
-        f"  - Name: {name}\n"
-        f"  - Description: {description}\n"
-        "\n"
-        "## Ticket 2 - Project Setup\n"
-        "- [ ] Started\n"
-        "- [ ] Coded\n"
-        "- [ ] Tested\n"
-        "- [ ] Reviewed\n"
-        "- [ ] Documented\n"
-        "- Read the design document and create `scripts/project-setup.bat` that:\n"
-        "  - creates a boiler plate project\n"
-        "  - sets up folders (src, scripts, docs, config, tests, logs)\n"
-        "  - installs dependencies and adds them to `requirements.txt`\n"
-        "- Run the project-setup.bat script"
-        "\n"
-        "## Ticket 3 - Update Agents Instructions\n"
-        "- [ ] Started\n"
-        "- [ ] Coded\n"
-        "- [ ] Tested\n"
-        "- [ ] Reviewed\n"
-        "- [ ] Documented\n"
-        "- Review the design document and expand `agents.md` with detailed project guidelines and iterative workflow instructions."
-    )
+    path = Path(__file__).with_name("default_tickets_no_design.md")
+    template = path.read_text()
+    return template.format(name=name, description=description)
 
 
 # ---------------------------------------------------------------------------
