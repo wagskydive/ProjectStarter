@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Project Setup Wizard
 
-Creates a new project folder with standard structure and tickets.
+Creates a new project folder containing only ``design.md``, ``AGENTS.md`` and ``tickets.md``.
 """
 
 from pathlib import Path
@@ -16,20 +16,6 @@ from tkinter import ttk, filedialog, messagebox
 def create_file(path: Path, content: str = ""):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content)
-
-
-def _create_structure(project_dir: Path):
-    for sub in ["src", "scripts", "docs", "config", ".github/workflows"]:
-        (project_dir / sub).mkdir(parents=True, exist_ok=True)
-
-
-def _package_json(name: str) -> str:
-    return (
-        '{\n'
-        f'  "name": "{name}",\n'
-        '  "version": "1.0.0"\n'
-        '}\n'
-    )
 
 
 def _empty_design(name: str) -> str:
@@ -118,58 +104,6 @@ def _default_tickets(design_provided: bool, name: str = "", description: str = "
     )
 
 
-def _setup_bat() -> str:
-    return (
-        "@echo off\n"
-        "python -m venv venv\n"
-        "call venv\\Scripts\\activate\n"
-        "pip install -r requirements.txt\n"
-    )
-
-
-def _workflow_yaml(template: str) -> str:
-    if template == "python":
-        return (
-            "name: Python package\n\n"
-            "on: [push]\n\n"
-            "jobs:\n"
-            "  build:\n"
-            "    runs-on: ubuntu-latest\n"
-            "    steps:\n"
-            "      - uses: actions/checkout@v3\n"
-            "      - uses: actions/setup-python@v4\n"
-            "        with:\n"
-            "          python-version: '3.x'\n"
-            "      - run: pip install -r requirements.txt\n"
-            "      - run: echo Build completed\n"
-        )
-    if template == "node":
-        return (
-            "name: Node.js CI\n\n"
-            "on: [push]\n\n"
-            "jobs:\n"
-            "  build:\n"
-            "    runs-on: ubuntu-latest\n"
-            "    steps:\n"
-            "      - uses: actions/checkout@v3\n"
-            "      - uses: actions/setup-node@v3\n"
-            "        with:\n"
-            "          node-version: '16'\n"
-            "      - run: npm install\n"
-            "      - run: npm test --if-present\n"
-        )
-    return (
-        "name: CI\n\n"
-        "on: [push]\n\n"
-        "jobs:\n"
-        "  build:\n"
-        "    runs-on: ubuntu-latest\n"
-        "    steps:\n"
-        "      - uses: actions/checkout@v3\n"
-        "      - run: echo Build placeholder\n"
-    )
-
-
 # ---------------------------------------------------------------------------
 # GUI implementation
 # ---------------------------------------------------------------------------
@@ -203,11 +137,7 @@ class SetupWizardGUI:
         self.desc_text = tk.Text(self.root, width=30, height=5)
         self.desc_text.grid(row=4, column=1, padx=5, pady=5)
 
-        tk.Label(self.root, text="Template").grid(row=5, column=0, sticky="w")
-        self.template_var = tk.StringVar(value="python")
-        ttk.Combobox(self.root, textvariable=self.template_var, values=["python", "node", "godot", "arduino"]).grid(row=5, column=1, padx=5, pady=5)
-
-        tk.Button(self.root, text="Create Project", command=self._submit).grid(row=6, column=0, columnspan=3, pady=10)
+        tk.Button(self.root, text="Create Project", command=self._submit).grid(row=5, column=0, columnspan=3, pady=10)
 
         self._toggle_mode()
 
@@ -234,20 +164,18 @@ class SetupWizardGUI:
 
     def _submit(self):
         project_dir = Path(self.project_dir_var.get()).expanduser()
-        template = self.template_var.get().lower()
         if self.design_mode.get() == "file":
             design_path = Path(self.design_path_var.get()).expanduser()
-            self._create(project_dir, template, design_path=design_path, design_provided=True)
+            self._create(project_dir, design_path=design_path, design_provided=True)
         else:
             name = self.name_var.get().strip() or project_dir.name
             description = self.desc_text.get("1.0", tk.END).strip()
-            self._create(project_dir, template, name=name, description=description, design_provided=False)
+            self._create(project_dir, name=name, description=description, design_provided=False)
         messagebox.showinfo("Success", f"Project initialized at {project_dir.resolve()}")
         self.root.quit()
 
-    def _create(self, project_dir: Path, template: str, design_path: Path = None, name: str = "", description: str = "", design_provided: bool = True):
+    def _create(self, project_dir: Path, design_path: Path = None, name: str = "", description: str = "", design_provided: bool = True):
         project_dir.mkdir(parents=True, exist_ok=True)
-        _create_structure(project_dir)
 
         if design_provided:
             if design_path is None:
@@ -261,7 +189,6 @@ class SetupWizardGUI:
         else:
             create_file(project_dir / "design.md", _empty_design(name))
 
-        create_file(project_dir / "README.md", f"# {project_dir.name}\n")
         create_file(project_dir / "AGENTS.md", _default_agents())
         create_file(project_dir / "tickets.md", _default_tickets(design_provided, name, description))
 
