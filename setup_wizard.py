@@ -39,8 +39,11 @@ def _empty_design(name: str) -> str:
 def _default_agents() -> str:
     return (
         "# Agent Instructions\n\n"
-        "Use `tickets.md` for task tracking in an agile manner. "
-        "Each ticket can be turned into a pull request. Reviewers may reopen tickets if needed."
+        "1. Review `PROJECT_SETUP_DESIGN_DOCUMENT.md` to understand the project goals.\n"
+        "2. Use `tickets.md` for task tracking. Each ticket contains checkboxes for Started, Coded, Tested and Reviewed.\n"
+        "3. Work on tickets sequentially. When a ticket is complete, open a pull request referencing it.\n"
+        "4. A reviewer will create a review ticket and may reopen the original if changes are required.\n"
+        "5. Continue iterating through the tickets until the project is finished."
     )
 
 
@@ -49,29 +52,49 @@ def _default_tickets(design_provided: bool, name: str = "", description: str = "
         return (
             "# Tickets\n\n"
             "## Ticket 1 - Project Setup\n"
+            "- [ ] Started\n"
+            "- [ ] Coded\n"
+            "- [ ] Tested\n"
+            "- [ ] Reviewed\n"
             "- Read the design document and create `scripts/setup.bat` that:\n"
             "  - creates a virtual environment\n"
             "  - sets up folders (src, scripts, docs, config)\n"
             "  - installs dependencies from `requirements.txt`\n"
             "\n"
             "## Ticket 2 - Update Agents Instructions\n"
+            "- [ ] Started\n"
+            "- [ ] Coded\n"
+            "- [ ] Tested\n"
+            "- [ ] Reviewed\n"
             "- Review the design document and expand `agents.md` with detailed project guidelines and iterative workflow instructions."
         )
 
     return (
         "# Tickets\n\n"
         "## Ticket 1 - Create Design Document\n"
+        "- [ ] Started\n"
+        "- [ ] Coded\n"
+        "- [ ] Tested\n"
+        "- [ ] Reviewed\n"
         "- Use the following information to write `design.md`:\n"
         f"  - Name: {name}\n"
         f"  - Description: {description}\n"
         "\n"
         "## Ticket 2 - Project Setup\n"
+        "- [ ] Started\n"
+        "- [ ] Coded\n"
+        "- [ ] Tested\n"
+        "- [ ] Reviewed\n"
         "- After the design document is ready, create `scripts/setup.bat` that:\n"
         "  - creates a virtual environment\n"
         "  - sets up folders (src, scripts, docs, config)\n"
         "  - installs dependencies from `requirements.txt`\n"
         "\n"
         "## Ticket 3 - Update Agents Instructions\n"
+        "- [ ] Started\n"
+        "- [ ] Coded\n"
+        "- [ ] Tested\n"
+        "- [ ] Reviewed\n"
         "- Review the design document and expand `agents.md` with detailed project guidelines and iterative workflow instructions."
     )
 
