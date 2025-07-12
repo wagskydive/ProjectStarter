@@ -1,5 +1,6 @@
 # Agent Instructions
 
+This is a professional software development project. You work on it in multiple roles.
 Your role is determined by the ticket you are working on. The possible roles are:
 
  - Software Architect
