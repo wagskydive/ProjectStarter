@@ -40,18 +40,22 @@ def _default_agents() -> str:
     return (
         "# Agent Instructions\n\n"
         "Your role is determined by your task.\n"
+        "The roles are: \n"
+        " - Software Architect, Test Writer, Code Implementer, Test Runner, Reviewer, Documentation Writer\n"
+        " - You also have another role as creative critical thinker. So during the execusion of tasks you write a log file and before you end the task, you summerize the log and give suggestions for enhancements or different approaches.\n"
         
         "1. Review `design.md` to understand the project goals.\n"
         "2. Use `tickets.md` for task tracking. Each ticket contains checkboxes for Started, Coded, Tested and Reviewed.\n"
         "3. If tickets.md has no open tickets, your role is to create new tickets by checking the `design.md` file and the current project state"
         "4. Work on tickets sequentially.\n" 
-        "5. Determine if the ticket has a small enough scope and if not you split the ticket op in smaller chucks and start only the first one.\n"
+        "5. Determine if the ticket has a small enough scope. If not, you split the ticket into smaller chucks and start only the first one.\n"
         "6. Write Tests first. Use Test Driven Approach\n"
         "7. Use Tests to write documentation\n"
-        "8. When a ticket is complete, open a pull request referencing it.\n"
-        "9. As a reviewer, you may reopen the original if changes are required.\n"
-        "10. A reviewer can also create new tickets\n"
-        "11. Continue iterating through the tickets until the project is finished."
+        "8. Update the README.md file if required, so it includes a full instruction on how to run the app\n"
+        "9. When a ticket is complete, open a pull request referencing it.\n"
+        "10. As a reviewer, you may reopen the original if changes are required.\n"
+        "11. A reviewer can also create new tickets\n"
+        "12. Continue iterating through the tickets until the project is finished."
     )
 
 
@@ -65,10 +69,11 @@ def _default_tickets(design_provided: bool, name: str = "", description: str = "
             "- [ ] Tested\n"
             "- [ ] Reviewed\n"
             "- [ ] Documented\n"
-            "- Read the design document and create `scripts/setup.bat` that:\n"
-            "  - creates a virtual environment\n"
-            "  - sets up folders (src, scripts, docs, config)\n"
-            "  - installs dependencies from `requirements.txt`\n"
+            "- Read the design document and create `scripts/project-setup.bat` that:\n"
+            "  - creates a boiler plate project\n"
+            "  - sets up folders (src, scripts, docs, config, tests, logs)\n"
+            "  - installs dependencies and adds them to `requirements.txt`\n"
+            "- Run the project-setup.bat script"
             "\n"
             "## Ticket 2 - Update Agents Instructions\n"
             "- [ ] Started\n"
@@ -97,10 +102,11 @@ def _default_tickets(design_provided: bool, name: str = "", description: str = "
         "- [ ] Tested\n"
         "- [ ] Reviewed\n"
         "- [ ] Documented\n"
-        "- After the design document is ready, create `scripts/setup.bat` that:\n"
-        "  - creates a virtual environment\n"
-        "  - sets up folders (src, scripts, docs, config)\n"
-        "  - installs dependencies from `requirements.txt`\n"
+        "- Read the design document and create `scripts/project-setup.bat` that:\n"
+        "  - creates a boiler plate project\n"
+        "  - sets up folders (src, scripts, docs, config, tests, logs)\n"
+        "  - installs dependencies and adds them to `requirements.txt`\n"
+        "- Run the project-setup.bat script"
         "\n"
         "## Ticket 3 - Update Agents Instructions\n"
         "- [ ] Started\n"
@@ -258,23 +264,6 @@ class SetupWizardGUI:
         create_file(project_dir / "README.md", f"# {project_dir.name}\n")
         create_file(project_dir / "AGENTS.md", _default_agents())
         create_file(project_dir / "tickets.md", _default_tickets(design_provided, name, description))
-
-        if template == "python":
-            create_file(project_dir / "requirements.txt")
-            create_file(project_dir / "scripts" / "setup.bat", _setup_bat())
-            create_file(project_dir / ".github" / "workflows" / "python.yml", _workflow_yaml("python"))
-        elif template == "node":
-            create_file(project_dir / "package.json", _package_json(project_dir.name))
-            create_file(project_dir / "src" / "index.js", "// entry point\n")
-            create_file(project_dir / ".github" / "workflows" / "node.yml", _workflow_yaml("node"))
-        elif template == "godot":
-            create_file(project_dir / "project.godot")
-            create_file(project_dir / ".github" / "workflows" / "godot.yml", _workflow_yaml("godot"))
-        elif template == "arduino":
-            create_file(project_dir / "src" / "sketch.ino", "// Arduino sketch\n")
-            create_file(project_dir / ".github" / "workflows" / "arduino.yml", _workflow_yaml("arduino"))
-        else:
-            print(f"Unknown template '{template}', using generic setup.")
 
 
 def main():
